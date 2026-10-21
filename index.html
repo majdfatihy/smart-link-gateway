@@ -4,11 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>مركز فحص وتجهيز الروابط الآمنة</title>
-  <!-- ملف الإعلانات الخارجي: لازم يفضل هنا (بدون async/defer) وقبل أي استدعاء
-       لأي دالة loadAdXxx() في باقي الصفحة، وإلا هتختفي الإعلانات فقط
-       (التحويل/العداد التنازلي كود منفصل ومش متأثر). حافظ على نفس المسار
-       النسبي "ads.js" أو عدّله هنا لو نقلت الملف لمجلد تاني. -->
-  <script src="ads.js"></script>
   <style>
     :root {
       --primary: #2563eb;
@@ -250,7 +245,7 @@
     }
   </style>
 </head>
-<body>
+<body data-no-support>
 
   <header class="site-header">
     🛡️ بوابة التحقق وتجهيز الروابط المباشرة
@@ -258,21 +253,15 @@
 
   <div class="page-wrapper">
     
-    <!-- [1] العمود الجانبي الأيمن — Skyscraper 160x600 (الكود في ads.js) -->
     <aside class="sidebar">
-      <div class="ad-slot">
-        <script>loadAdRightSkyscraper();</script>
-      </div>
+      <div class="ad-slot"><div data-ad="sideR"></div></div>
     </aside>
 
 
     <!-- المحتوى الرئيسي بالمنتصف -->
     <main class="main-content">
 
-      <!-- [2] البانر العلوي الموحد المتجاوب (728x90 / 468x60 / 320x50 حسب الشاشة) — الكود في ads.js -->
-      <div class="ad-slot">
-        <script>loadAdTopResponsive();</script>
-      </div>
+      <div class="ad-slot"><div data-ad="topx"></div></div>
 
 
       <!-- بطاقة العداد التنازلي والزر اليدوي -->
@@ -287,18 +276,21 @@
           <!-- زر الرابط النهائي (يظهر بعد انتهاء الوقت ويفتح في تبويب جديد عند الضغط عليه) -->
           <a href="#" id="direct-link-btn" class="btn btn-primary" target="_blank" rel="nofollow noopener noreferrer">اضغط هنا للانتقال للرابط</a>
           
-          <!-- [3] رابط Smart Link — مجرد <a> عادي، مش سكريبت، فسايبه هنا كما هو -->
+          <!-- =================================================================
+               [3] بداية كود إعلان السمارت لينك (Smart Link / Direct Link)
+               - ماهيته: رابط إعلاني مباشر ذكي يوجه المستخدم لعروض المعلنين عند النقر.
+               - مقاسه: ليس له مقاس (عبارة عن رابط URL تم دمجه داخل زر HTML).
+               - هل متجاوب أم لا؟: متجاوب تماماً 100% لأنه زر مرن يتكيف مع الهاتف والكمبيوتر.
+          ================================================================== -->
           <a href="https://araplhn.org/4/3f093ddf57a8ee45454ef2e9b69b320a" target="_blank" rel="noopener noreferrer" class="btn btn-smart">
             سيرفر بديل مباشر ⚡
           </a>
+          <!-- ============== [3] نهاية كود إعلان السمارت لينك ============== -->
         </div>
       </div>
 
 
-      <!-- [4] البانر المتوسط المربع 300x250 — الكود في ads.js -->
-      <div class="ad-slot">
-        <script>loadAdMediumRectangle();</script>
-      </div>
+      <div class="ad-slot"><div data-ad="mid"></div></div>
 
 
       <!-- محتوى نصي إرشادي لحماية الصفحة أمام مراجعات الشبكة الإعلانية -->
@@ -313,20 +305,13 @@
       </article>
 
 
-      <!-- [5] النيتف بانر (Native Banner) — متجاوب تلقائيًا، الكود في ads.js -->
-      <div class="native-ad-container">
-        <script>loadAdNativeBanner();</script>
-        <div id="container-7d74d287d7c8907ca009698fb7e174e7"></div>
-      </div>
+      <div class="native-ad-container"><div data-ad="end"></div></div>
 
     </main>
 
 
-    <!-- [6] العمود الجانبي الأيسر — Half-Skyscraper 160x300 (الكود في ads.js) -->
     <aside class="sidebar">
-      <div class="ad-slot">
-        <script>loadAdLeftHalfSkyscraper();</script>
-      </div>
+      <div class="ad-slot"><div data-ad="sideL"></div></div>
     </aside>
 
   </div>
@@ -336,9 +321,9 @@
   </footer>
 
 
-  <!-- [7] + [8] السوشيال بار + البوب أندر — إعلانات عائمة، الكود في ads.js -->
-  <script>loadFloatingAds();</script>
 
+  <!-- كل الإعلانات في ملف منفصل -->
+  <script src="adsterra.js" defer></script>
 
   <!-- سكريبت العداد وإظهار الزر ليفتح في تبويب جديد -->
   <script>
