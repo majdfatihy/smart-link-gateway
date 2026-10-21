@@ -29,13 +29,13 @@
 
   // slot name -> [unit, minimum screen width] (first match wins)
   var P = {
-    top:   [['b728', 768], ['m320', 340]],
-    topx:  [['b728', 768], ['b468', 500], ['m320', 0]],
+    top:   [['b728', 800], ['m320', 340]],
+    topx:  [['b728', 800], ['b468', 500], ['m320', 0]],
     mid:   [['m300', 330]],
     end:   [['native', 0]],
     seo:   [['b468', 520]],
-    sideR: [['s160b', 1025]],
-    sideL: [['s160a', 1025]],
+    sideR: [['s160b', 1241]],
+    sideL: [['s160a', 1241]],
     railL: [['s160b', 1340]],
     railR: [['s160a', 1340]]
   };
@@ -114,13 +114,33 @@
     if (!pick) return;
     used[pick] = 1;
     var u = U[pick], box = document.createElement('div'),
-        lab = document.createElement('small'), holder = document.createElement('div');
+        lab = document.createElement('small'), holder = document.createElement('div'), out = null;
     box.className = 'adx'; lab.className = 'adl'; lab.setAttribute('data-l','1');
     lab.textContent = ar() ? 'إعلان' : 'Advertisement';
-    holder.style.cssText = u.native
-      ? 'width:100%;max-width:728px;min-height:' + u.h + 'px;margin:0 auto'
-      : 'width:' + u.w + 'px;max-width:100%;height:' + u.h + 'px;margin:0 auto;overflow:hidden';
-    box.appendChild(lab); box.appendChild(holder); slot.appendChild(box);
+    box.appendChild(lab);
+    if (u.native) {
+      holder.style.cssText = 'width:100%;max-width:728px;min-height:' + u.h + 'px;margin:0 auto';
+      box.appendChild(holder);
+    } else {
+      // fixed-size banner: shrink (never crop) when the container is narrower than the banner
+      out = document.createElement('div');
+      out.style.cssText = 'direction:ltr;margin:0 auto;width:' + u.w + 'px;height:' + u.h + 'px';
+      holder.style.cssText = 'direction:ltr;width:' + u.w + 'px;height:' + u.h + 'px;transform-origin:0 0';
+      out.appendChild(holder); box.appendChild(out);
+    }
+    slot.appendChild(box);
+    var fit = function () {
+      if (!out) return;
+      var p = slot.parentNode, cs = getComputedStyle(p),
+          av = p.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+      if (!(av > 0)) return;
+      var k = Math.min(1, av / u.w);
+      out.style.width = Math.round(u.w * k) + 'px';
+      out.style.height = Math.round(u.h * k) + 'px';
+      holder.style.transform = k < 1 ? 'scale(' + k + ')' : '';
+    };
+    fit();
+    var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(fit, 150); });
     if (/^rail/.test(slot.getAttribute('data-ad'))) {
       slot.style.cssText = 'position:fixed;top:84px;z-index:3;' +
         (slot.getAttribute('data-ad') === 'railL' ? 'left:10px' : 'right:10px');
@@ -128,7 +148,7 @@
     var go = function () { enqueue(function (fin) { frame(holder, u, fin); }); };
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (e) {
-        if (e[0].isIntersecting) { io.disconnect(); go(); }
+        if (e[0].isIntersecting) { io.disconnect(); fit(); go(); }
       }, { rootMargin: '300px' });
       io.observe(holder);
     } else go();
